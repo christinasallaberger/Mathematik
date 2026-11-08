@@ -337,7 +337,7 @@ footer {
     <ul class="ex" id="neu-list"></ul>
   </section>
 
-  <footer>Übersicht für Lehrer/innen. Neue Übungen und Überthemen werden in der Datei linkzusammenfassung.html (Repo „Mathematik“) unter UEBERTHEMEN (mit klasse) und THEMEN eingetragen.</footer>
+  <footer>Übersicht für Lehrer/innen. Neue Übungen ordnen sich über ihre uebersicht-Angaben selbst ein; Details stehen am Anfang der Datenliste in der linkzusammenfassung.html.</footer>
 </main>
 
 <script>
@@ -355,6 +355,17 @@ footer {
    feedback: optional – kurze Notiz (z. B. „lief gut, Bsp. 3 zu schwer“)
              oder ein Link (beginnt mit https://), dann wird er anklickbar
    ========================================================= */
+/* AUTOMATISCH EINSORTIEREN
+   Neue Übungen müssen hier NICHT eingetragen werden, wenn sie im <head> diese Zeilen haben:
+     <meta name="uebersicht-kapitel" content="Terme">            (Pflicht: Überkapitel)
+     <meta name="uebersicht-thema" content="Klammern">           (optional, sonst „Weitere Übungen“)
+     <meta name="uebersicht-info" content="Kurze Erklärung …">   (optional)
+     <meta name="uebersicht-gruppe" content="alle">              (optional: alle, ahs oder std)
+   Als Titel wird der <title> der Übung verwendet. Gibt es das Überkapitel in dieser
+   Klasse noch nicht, legt die Seite es selbst an (Erklärung optional über
+   <meta name="uebersicht-kapitel-erklaerung" content="…">).
+   Einträge hier in der Liste haben immer Vorrang. */
+
 /* Ein GitHub-Repo pro Klasse. Noch kein Repo? Einfach "" lassen. */
 const GITHUB_NAME = "christinasallaberger";
 const REPOS = {
@@ -626,6 +637,8 @@ function klasseVon(thema) {
   return b && b.klasse ? b.klasse : 0;   // 0 = ohne Klasse, erscheint überall
 }
 let suche = "";
+const AUTO = {};      // klasse -> [{ ueberthema, titel, uebung }]
+const AUTO_UE = {};   // klasse -> [{ titel, erklaerung }]
 
 try {
   const g = localStorage.getItem("m3-gruppe");
@@ -648,8 +661,19 @@ function render() {
   let html = "";
 
   // Reihenfolge: zuerst wie in UEBERTHEMEN, dann alle übrigen Namen, Themen ohne Überthema zuletzt
-  const meine = THEMEN.filter(t => { const k = klasseVon(t); return k === 0 || k === klasse; });
-  const namen = UEBERTHEMEN.filter(b => b.klasse === klasse).map(b => b.titel);
+  const meine = THEMEN
+    .filter(t => { const k = klasseVon(t); return k === 0 || k === klasse; })
+    .map(t => ({ ...t, uebungen: [...t.uebungen] }));
+  (AUTO[klasse] || []).forEach(a => {
+    let t = meine.find(x => x.ueberthema === a.ueberthema && x.titel.toLowerCase() === a.titel.toLowerCase());
+    if (!t) {
+      t = { klasse, ueberthema: a.ueberthema, titel: a.titel, beschreibung: "", uebungen: [] };
+      meine.push(t);
+    }
+    t.uebungen.push(a.uebung);
+  });
+  const ueAlle = UEBERTHEMEN.filter(b => b.klasse === klasse).concat(AUTO_UE[klasse] || []);
+  const namen = ueAlle.map(b => b.titel);
   meine.forEach(t => { const n = t.ueberthema || ""; if (!namen.includes(n)) namen.push(n); });
   namen.sort((a, b) => (a === "") - (b === ""));
 
@@ -668,13 +692,13 @@ function render() {
         <ul class="ex">`;
       sichtbar.forEach(u => {
         const url = /^https?:/.test(u.datei) ? u.datei : baseVon(klasseVon(thema) || klasse) + u.datei;
-        const meta = (u.info ? esc(u.info) + " – " : "") + esc(u.datei);
+        const meta = (u.info ? esc(u.info) + " – " : "") + esc(u.datei) + (u.auto ? " · automatisch eingeordnet" : "");
         inhalt += zeile(url, u.titel, `<span class="chip ${u.gruppe}">${NAMEN[u.gruppe]}</span>`, meta, u.feedback);
       });
       inhalt += `</ul></section>`;
     });
     if (!inhalt) return;
-    const b = UEBERTHEMEN.find(x => x.titel === name);
+    const b = ueAlle.find(x => x.titel === name);
     html += `<section class="bereich">
       <h2><span class="nr">${nr}</span>${esc(name || "Weitere Themen")}</h2>
       ${b && b.erklaerung ? `<p class="erkl">${esc(b.erklaerung)}</p>` : ""}
@@ -774,6 +798,29 @@ async function dateienHolen(k) {
   return namen;
 }
 
+/* Liest Titel und uebersicht-Angaben aus einer Übung (10 Minuten zwischengespeichert). */
+async function angabenHolen(k, name) {
+  const key = "m-meta-" + k + "-" + name;
+  try {
+    const c = JSON.parse(sessionStorage.getItem(key) || "null");
+    if (c && Date.now() - c.zeit < 10 * 60 * 1000) return c.d;
+  } catch (e) {}
+  const r = await fetch(baseVon(k) + name, { cache: "no-cache" });
+  if (!r.ok) return null;
+  const doc = new DOMParser().parseFromString(await r.text(), "text/html");
+  const m = n => (doc.querySelector(`meta[name="uebersicht-${n}"]`)?.getAttribute("content") || "").trim();
+  const d = {
+    titel: (doc.querySelector("title")?.textContent || "").trim(),
+    kapitel: m("kapitel"),
+    kapitelErkl: m("kapitel-erklaerung"),
+    thema: m("thema"),
+    info: m("info"),
+    gruppe: m("gruppe").toLowerCase()
+  };
+  try { sessionStorage.setItem(key, JSON.stringify({ zeit: Date.now(), d })); } catch (e) {}
+  return d;
+}
+
 async function neueDateien() {
   const box = document.getElementById("neu");
   box.hidden = true;
@@ -786,11 +833,41 @@ async function neueDateien() {
       .filter(t => klasseVon(t) === k)
       .flatMap(t => t.uebungen.map(u => u.datei.toLowerCase())));
     const neu = namen.filter(n => n.toLowerCase() !== "index.html" && !bekannt.has(n.toLowerCase()));
-    if (!neu.length) return;
+
+    const angaben = await Promise.all(neu.map(n => angabenHolen(k, n).catch(() => null)));
+    if (k !== klasse) return;
+
+    AUTO[k] = [];
+    AUTO_UE[k] = [];
+    const ohne = [];
+    neu.forEach((n, i) => {
+      const d = angaben[i];
+      const titel = (d && d.titel) || n.replace(/\.html?$/i, "");
+      if (!d || !d.kapitel) { ohne.push({ n, titel }); return; }
+      // Überkapitel suchen (Groß-/Kleinschreibung egal), sonst neu anlegen
+      let ue = UEBERTHEMEN.find(b => b.klasse === k && b.titel.toLowerCase() === d.kapitel.toLowerCase())
+            || AUTO_UE[k].find(b => b.titel.toLowerCase() === d.kapitel.toLowerCase());
+      if (!ue) { ue = { titel: d.kapitel, erklaerung: d.kapitelErkl }; AUTO_UE[k].push(ue); }
+      AUTO[k].push({
+        ueberthema: ue.titel,
+        titel: d.thema || "Weitere Übungen",
+        uebung: {
+          titel,
+          gruppe: ["alle", "ahs", "std"].includes(d.gruppe) ? d.gruppe : "alle",
+          info: d.info,
+          datei: n,
+          feedback: "",
+          auto: true
+        }
+      });
+    });
+    render();
+
+    if (!ohne.length) return;
     document.getElementById("neu-desc").textContent =
-      `Diese Dateien liegen im Repo ${REPOS[k]}, stehen aber noch nicht in der Liste oben.`;
-    document.getElementById("neu-list").innerHTML = neu
-      .map(n => zeile(baseVon(k) + n, n.replace(/\.html?$/i, ""), "", esc(n), ""))
+      `Diese Dateien liegen im Repo ${REPOS[k]}, haben aber noch keine Angaben für die Übersicht.`;
+    document.getElementById("neu-list").innerHTML = ohne
+      .map(o => zeile(baseVon(k) + o.n, o.titel, "", esc(o.n), ""))
       .join("");
     box.hidden = false;
   } catch (e) {}
