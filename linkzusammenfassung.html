@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Mathematik – Übungsübersicht für Lehrer/innen</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet">
+<style>
+/* =========================================================
+   Farben: Rechenheft – Kästchenpapier, Füllertinte, roter Rand
+   ========================================================= */
+:root {
+  --paper: #FBFCFE;
+  --grid: #DCE7F2;
+  --ink: #1D3A8A;
+  --text: #1E2433;
+  --muted: #5B6270;
+  --margin: #E0484E;
+  --chip-alle: #E6EEFB;
+  --chip-ahs: #FCE8D8;
+  --chip-std: #DFF3E6;
+  --chip-alle-t: #1D3A8A;
+  --chip-ahs-t: #8A3B0E;
+  --chip-std-t: #1C6B3A;
+  --row-hover: #EEF3FB;
+  --line: #C9D6E6;
+  color-scheme: light;
+  box-sizing: border-box;
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --paper: #141821;
+    --grid: #1F2634;
+    --ink: #9DB6FF;
+    --text: #E6E9F0;
+    --muted: #9AA2B2;
+    --margin: #F0686D;
+    --chip-alle: #233056;
+    --chip-ahs: #4A2D1A;
+    --chip-std: #1D3F2A;
+    --chip-alle-t: #C8D6FF;
+    --chip-ahs-t: #FFD2B0;
+    --chip-std-t: #B9EBC9;
+    --row-hover: #1C2230;
+    --line: #2C3546;
+    color-scheme: dark;
+  }
+}
+*, *::before, *::after { box-sizing: inherit; }
+html { scroll-padding-top: env(safe-area-inset-top, 0px); }
+body {
+  margin: 0;
+  background-color: var(--paper);
+  background-image:
+    linear-gradient(var(--grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size: 22px 22px;
+  color: var(--text);
+  font-family: "Atkinson Hyperlegible", system-ui, -apple-system, "Segoe UI", sans-serif;
+  font-size: 1.0625rem;
+  line-height: 1.5;
+}
+
+/* Roter Heftrand */
+.sheet {
+  max-width: 820px;
+  margin: 0 auto;
+  padding: 3rem 1.25rem 4rem 4.5rem;
+  position: relative;
+}
+.sheet::before {
+  content: "";
+  position: absolute;
+  top: 0; bottom: 0; left: 3rem;
+  width: 2px;
+  background: var(--margin);
+  opacity: .75;
+}
+
+header h1 {
+  font-family: "Bricolage Grotesque", "Atkinson Hyperlegible", system-ui, sans-serif;
+  font-weight: 800;
+  font-size: clamp(2.2rem, 7vw, 3.6rem);
+  line-height: 1.02;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  margin: 0 0 .5rem;
+}
+header p {
+  margin: 0 0 2rem;
+  color: var(--muted);
+  max-width: 60ch;
+}
+
+/* Klassen-Reiter: wie Register-Laschen am Heftrand */
+.klassen {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem;
+  margin: 0 0 1.5rem;
+  border-bottom: 2px solid var(--ink);
+}
+.klassen button {
+  font-family: "Bricolage Grotesque", "Atkinson Hyperlegible", system-ui, sans-serif;
+  font-weight: 700;
+  font-size: 1.05rem;
+  color: var(--ink);
+  background: var(--paper);
+  border: 2px solid var(--line);
+  border-bottom: 0;
+  border-radius: 10px 10px 0 0;
+  padding: .5rem 1.1rem;
+  margin-bottom: -2px;
+  cursor: pointer;
+}
+.klassen button:hover { border-color: var(--ink); }
+.klassen button[aria-current="page"] {
+  background: var(--ink);
+  color: var(--paper);
+  border-color: var(--ink);
+}
+
+/* Gruppenwahl */
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .75rem 1.25rem;
+  align-items: center;
+  margin-bottom: 2.5rem;
+}
+.controls .label { font-weight: 700; }
+.seg {
+  display: inline-flex;
+  border: 2px solid var(--ink);
+  border-radius: 999px;
+  overflow: hidden;
+  background: var(--paper);
+}
+.seg button {
+  font: inherit;
+  font-weight: 700;
+  border: 0;
+  background: transparent;
+  color: var(--ink);
+  padding: .45rem 1rem;
+  cursor: pointer;
+}
+.seg button + button { border-left: 2px solid var(--ink); }
+.seg button[aria-pressed="true"] {
+  background: var(--ink);
+  color: var(--paper);
+}
+.search {
+  flex: 1 1 200px;
+  font: inherit;
+  padding: .5rem .85rem;
+  border: 2px solid var(--line);
+  border-radius: 10px;
+  background: var(--paper);
+  color: var(--text);
+}
+.search:focus { border-color: var(--ink); outline: none; }
+button:focus-visible, a:focus-visible {
+  outline: 3px solid var(--margin);
+  outline-offset: 2px;
+}
+
+/* Überthemen */
+section.bereich { margin-bottom: 3.5rem; }
+section.bereich > h2 {
+  font-family: "Bricolage Grotesque", "Atkinson Hyperlegible", system-ui, sans-serif;
+  font-weight: 800;
+  font-size: 2rem;
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+  margin: 0 0 .4rem;
+  color: var(--ink);
+  position: relative;
+}
+section.bereich > h2 .nr {
+  position: absolute;
+  left: -3.6rem;
+  width: 2.4rem;
+  text-align: right;
+  color: var(--margin);
+}
+.erkl {
+  margin: 0 0 1.75rem;
+  max-width: 60ch;
+  color: var(--text);
+}
+section.topic h3 {
+  font-family: "Bricolage Grotesque", "Atkinson Hyperlegible", system-ui, sans-serif;
+  font-weight: 700;
+  font-size: 1.3rem;
+  line-height: 1.2;
+  margin: 0 0 .2rem;
+}
+
+/* Themenblöcke */
+section.topic { margin-bottom: 2.75rem; }
+section.topic h2 {
+  font-family: "Bricolage Grotesque", "Atkinson Hyperlegible", system-ui, sans-serif;
+  font-weight: 700;
+  font-size: 1.6rem;
+  line-height: 1.15;
+  margin: 0 0 .25rem;
+  color: var(--text);
+  position: relative;
+}
+/* Themennummer sitzt links im Heftrand – die Themen sind die Reihenfolge im Schuljahr */
+section.topic h2 .nr {
+  position: absolute;
+  left: -3.6rem;
+  width: 2.4rem;
+  text-align: right;
+  color: var(--margin);
+}
+section.topic .desc {
+  margin: 0 0 .75rem;
+  color: var(--muted);
+}
+ul.ex {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border-top: 2px solid var(--ink);
+}
+ul.ex li { border-bottom: 1px solid var(--line); }
+ul.ex a.item {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: .25rem 1rem;
+  align-items: center;
+  padding: .85rem .5rem;
+  text-decoration: none;
+  color: inherit;
+}
+ul.ex a.item:hover { background: var(--row-hover); }
+.item .title { font-weight: 700; color: var(--ink); }
+.item .meta { grid-column: 1; color: var(--muted); font-size: .95rem; }
+.chip {
+  grid-row: 1 / span 2;
+  grid-column: 2;
+  font-size: .85rem;
+  font-weight: 700;
+  padding: .2rem .7rem;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+.chip.alle { background: var(--chip-alle); color: var(--chip-alle-t); }
+.chip.ahs  { background: var(--chip-ahs);  color: var(--chip-ahs-t); }
+.chip.std  { background: var(--chip-std);  color: var(--chip-std-t); }
+.fb {
+  display: inline-block;
+  margin: 0 .5rem .75rem;
+  font-size: .9rem;
+  color: var(--ink);
+}
+
+.row { display: flex; align-items: center; gap: .5rem; }
+.row .item { flex: 1; min-width: 0; }
+.copy {
+  font: inherit;
+  font-size: .85rem;
+  font-weight: 700;
+  color: var(--ink);
+  background: transparent;
+  border: 2px solid var(--line);
+  border-radius: 8px;
+  padding: .35rem .7rem;
+  cursor: pointer;
+  white-space: nowrap;
+  margin-right: .5rem;
+}
+.copy:hover { border-color: var(--ink); }
+.note {
+  margin: 0 .5rem .75rem;
+  padding-left: .75rem;
+  border-left: 3px solid var(--margin);
+  color: var(--muted);
+  font-size: .95rem;
+}
+.meta { overflow-wrap: anywhere; }
+
+.empty {
+  padding: 2rem 0;
+  color: var(--muted);
+}
+footer {
+  margin-top: 3rem;
+  color: var(--muted);
+  font-size: .9rem;
+}
+
+@media (max-width: 560px) {
+  .sheet { padding-left: 2.5rem; padding-top: 2rem; }
+  .sheet::before { left: 1.6rem; }
+  section.bereich > h2 .nr { left: -2.4rem; width: 1.6rem; font-size: 1.3rem; top: .25rem; }
+  section.topic h2 .nr { left: -2.4rem; width: 1.6rem; font-size: 1.1rem; top: .2rem; }
+}
+</style>
+</head>
+<body>
+<main class="sheet">
+  <header>
+    <h1>Mathematik<br><span id="kl-titel">3. Klasse</span></h1>
+    <p>Alle interaktiven Übungen an einem Ort. Öffnen zum Ansehen, „Link kopieren“ zum Weitergeben an die Klasse. Der Gruppenfilter zeigt, was für AHS bzw. Standard gedacht ist.</p>
+  </header>
+
+  <nav class="klassen" aria-label="Klasse wählen">
+    <button type="button" data-k="1">1. Klasse</button>
+    <button type="button" data-k="2">2. Klasse</button>
+    <button type="button" data-k="3">3. Klasse</button>
+    <button type="button" data-k="4">4. Klasse</button>
+  </nav>
+
+  <div class="controls">
+    <span class="label" id="grp-label">Gruppe:</span>
+    <div class="seg" role="group" aria-labelledby="grp-label">
+      <button type="button" data-g="all" aria-pressed="true">Alle zeigen</button>
+      <button type="button" data-g="ahs" aria-pressed="false">AHS</button>
+      <button type="button" data-g="std" aria-pressed="false">Standard</button>
+    </div>
+    <input class="search" type="search" placeholder="Übung suchen …" aria-label="Übung suchen">
+  </div>
+
+  <div id="list"></div>
+
+  <section class="topic" id="neu" hidden>
+    <h2>Noch nicht eingetragen</h2>
+    <p class="desc" id="neu-desc"></p>
+    <ul class="ex" id="neu-list"></ul>
+  </section>
+
+  <footer>Übersicht für Lehrer/innen. Neue Übungen und Überthemen werden in der index.html unter UEBERTHEMEN (mit klasse) und THEMEN eingetragen.</footer>
+</main>
+
+<script>
+/* =========================================================
+   HIER NEUE ÜBUNGEN EINTRAGEN
+   1) UEBERTHEMEN: großer Bereich + kurze Erklärung (erscheint als Überschrift)
+      klasse: 1, 2, 3 oder 4 – auf welchem Klassen-Reiter das Überthema erscheint
+   2) THEMEN: jedes Thema gehört über "ueberthema" zu einem Bereich –
+      der Name muss genau so geschrieben sein wie bei UEBERTHEMEN
+      und darf in zwei Klassen nicht gleich lauten
+   gruppe: "alle", "ahs" oder "std"
+   info: optional – kurze Erklärung zur einzelnen Übung
+   datei: Dateiname aus dem Repo der jeweiligen Klasse (siehe REPOS)
+          ODER ein kompletter Link (https://…)
+   feedback: optional – kurze Notiz (z. B. „lief gut, Bsp. 3 zu schwer“)
+             oder ein Link (beginnt mit https://), dann wird er anklickbar
+   ========================================================= */
+/* Ein GitHub-Repo pro Klasse. Noch kein Repo? Einfach "" lassen. */
+const GITHUB_NAME = "christinasallaberger";
+const REPOS = {
+  1: "Mathematik-1.Klasse",
+  2: "Mathematik-2.Klasse",
+  3: "Mathematik-3.Klasse",
+  4: "Mathematik-4.Klasse"
+};
+const baseVon = k => REPOS[k] ? `https://${GITHUB_NAME}.github.io/${REPOS[k]}/` : "";
+
+const UEBERTHEMEN = [
+  {
+    klasse: 2,
+    titel: "Teilbarkeit",
+    erklaerung: "Teiler und Vielfache: größter gemeinsamer Teiler und kleinstes gemeinsames Vielfaches mit der Primfaktorzerlegung."
+  },
+  {
+    klasse: 3,
+    titel: "Rechnen mit ganzen Zahlen",
+    erklaerung: "Klammer vor Punkt vor Strich mit positiven und negativen Zahlen. Die Schüler/innen markieren die Rechenteile und rechnen Zeile für Zeile bis zum Ergebnis."
+  },
+  {
+    klasse: 3,
+    titel: "Bruchrechnung",
+    erklaerung: "Brüche mit Vorzeichen und gemischte Zahlen addieren, subtrahieren, multiplizieren und dividieren, zum Schluss alles gemischt und mit Klammern."
+  },
+  {
+    klasse: 3,
+    titel: "Potenzen",
+    erklaerung: "Fachbegriffe, Potenzen als Produkt schreiben und berechnen, Rechenregeln für Potenzen sowie Zehnerpotenzen und Gleitkommadarstellung."
+  },
+  {
+    klasse: 3,
+    titel: "Terme",
+    erklaerung: "Monom, Binom, Polynom unterscheiden, gleichartige Glieder zusammenfassen, Klammern auflösen und die binomischen Formeln."
+  },
+  {
+    klasse: 3,
+    titel: "Dreiecke",
+    erklaerung: "Dreiecksarten und ihre Eigenschaften, Formeln für Umfang und Flächeninhalt und deren Anwendung in Textaufgaben."
+  },
+  {
+    klasse: 4,
+    titel: "Zahlenmengen und Wurzeln",
+    erklaerung: "Von ℕ bis ℝ mit den irrationalen Zahlen 𝕀, dazu Quadratwurzeln teilweise ziehen und vereinfachen."
+  },
+  {
+    klasse: 4,
+    titel: "Termumformungen",
+    erklaerung: "Klammern auflösen, ausmultiplizieren, herausheben und Bruchterme addieren und subtrahieren."
+  },
+  {
+    klasse: 4,
+    titel: "Bruchrechnung (Wiederholung)",
+    erklaerung: "Auffrischung der Punktrechnungen mit Brüchen als Grundlage für die Bruchterme."
+  },
+  {
+    klasse: 4,
+    titel: "Pythagoras",
+    erklaerung: "Der pythagoreische Lehrsatz im rechtwinkligen Dreieck und angewendet auf Rechteck, Quadrat, gleichschenkelige, gleichseitige Dreiecke und Vierecke."
+  }
+];
+
+const THEMEN = [
+  {
+    ueberthema: "Teilbarkeit",
+    titel: "ggT und kgV",
+    beschreibung: "",
+    uebungen: [
+      { titel: "ggT und kgV", gruppe: "alle", info: "8 Beispiele Schritt für Schritt mit Primfaktoren.", datei: "ggtkgv.html", feedback: "" }
+    ]
+  },
+  {
+    ueberthema: "Rechnen mit ganzen Zahlen",
+    titel: "Klapustri mit ganzen Zahlen",
+    beschreibung: "Rechenteile anklicken, Vorzeichen auflösen, ausrechnen, nächste Zeile übertragen. Am Ende gibt es eine Zusammenfassung für die Lehrkraft.",
+    uebungen: [
+      { titel: "10 Aufgaben", gruppe: "alle", info: "Gemischte Aufgaben für die ganze Gruppe.", datei: "Klapusrti10Aufgaben.html", feedback: "" },
+      { titel: "4 Beispiele", gruppe: "ahs", info: "Neue Zahlen, Niveau AHS.", datei: "KlapustriAHS4beispiele.html", feedback: "" },
+      { titel: "4 Beispiele", gruppe: "std", info: "Neue Zahlen, Niveau Standard.", datei: "KlapustriStandard4beispiele.html", feedback: "" }
+    ]
+  },
+  {
+    ueberthema: "Bruchrechnung",
+    titel: "Addieren und subtrahieren",
+    beschreibung: "",
+    uebungen: [
+      { titel: "Bruchtraining 2", gruppe: "alle", info: "20 Plus- und Minusaufgaben mit Vorzeichen, ab Aufgabe 11 mit gemischten Zahlen. Als freiwillige Übung gedacht.", datei: "bruchubungenfreiwillig.html", feedback: "" }
+    ]
+  },
+  {
+    ueberthema: "Bruchrechnung",
+    titel: "Multiplizieren und dividieren",
+    beschreibung: "",
+    uebungen: [
+      { titel: "Brüche mal und durch", gruppe: "alle", info: "Gemischte Zahlen umwandeln, neu anschreiben und Schritt für Schritt rechnen.", datei: "brucheamultiunddivi.html", feedback: "" },
+      { titel: "Bruchtraining 3", gruppe: "alle", info: "20 Aufgaben, abwechselnd Strich- und Punktrechnung, ab Aufgabe 11 mit gemischten Zahlen.", datei: "bruchmultidivi.html", feedback: "" }
+    ]
+  },
+  {
+    ueberthema: "Bruchrechnung",
+    titel: "Alles gemischt",
+    beschreibung: "",
+    uebungen: [
+      { titel: "Brüche gemischt", gruppe: "alle", info: "Niveau Standard / Standard AHS in der Übung wählbar. Alle vier Rechenarten mit gemischten Zahlen, positiv und negativ; vor dem Kürzen entscheiden die Schüler/innen selbst.", datei: "bruchegemischt.html", feedback: "" },
+      { titel: "Klapustri mit Brüchen", gruppe: "ahs", info: "Brüche und Dezimalzahlen mit Vorzeichen in Klammern, Dezimalzahlen zuerst in Brüche umwandeln.", datei: "KlapustrimitBruchen.html", feedback: "" }
+    ]
+  },
+  {
+    ueberthema: "Potenzen",
+    titel: "Grundlagen",
+    beschreibung: "",
+    uebungen: [
+      { titel: "Potenzen üben", gruppe: "alle", info: "Basis und Exponent benennen, als Potenz bzw. als Produkt schreiben, Wert berechnen, negative Basis. Jedes Mal neue Zahlen.", datei: "potenzen.html", feedback: "" },
+      { titel: "Potenzen Schritt für Schritt", gruppe: "alle", info: "Einstiegsversion: immer nur eine Aufgabe, Hilfe bei Fehlern, Vorlesefunktion und Sterne für drei richtige hintereinander.", datei: "potenzenao.html", feedback: "" }
+    ]
+  },
+  {
+    ueberthema: "Potenzen",
+    titel: "Rechnen mit Potenzen",
+    beschreibung: "",
+    uebungen: [
+      { titel: "Rechenregeln", gruppe: "alle", info: "Niveau Standard / Standard AHS in der Übung wählbar. Sofortige Kontrolle, falsche Aufgaben können wiederholt werden.", datei: "rechnenmitpotenzen.html", feedback: "" },
+      { titel: "Zehnerpotenzen und Gleitkomma", gruppe: "alle", info: "Zwischen natürlicher Zahl, Zehnerpotenz und Gleitkommadarstellung hin- und herschreiben.", datei: "zehnergleit.html", feedback: "" }
+    ]
+  },
+  {
+    ueberthema: "Terme",
+    titel: "Termarten",
+    beschreibung: "",
+    uebungen: [
+      { titel: "Monom, Binom, Polynom", gruppe: "alle", info: "Terme erkennen und richtig benennen.", datei: "termarten.html", feedback: "" }
+    ]
+  },
+  {
+    ueberthema: "Terme",
+    titel: "Addieren und subtrahieren",
+    beschreibung: "",
+    uebungen: [
+      { titel: "Terme + und −", gruppe: "alle", info: "20 Beispiele, von einfach bis schwierig: gleichartige Glieder zusammenfassen.", datei: "termeas.html", feedback: "" },
+      { titel: "Mit Hochzahlen, Klammern und Probe", gruppe: "alle", info: "Standard: zwei Variablen, einfache Klammern. Standard AHS: drei Variablen, Hochzahlen und verschachtelte Klammern.", datei: "termeaddsub.html", feedback: "" }
+    ]
+  },
+  {
+    ueberthema: "Terme",
+    titel: "Binomische Formeln",
+    beschreibung: "",
+    uebungen: [
+      { titel: "Binomische Formeln (a ± b)²", gruppe: "alle", info: "Niveau Standard / Standard AHS in der Übung wählbar. Formel erkennen, a und b bestimmen, Teile ausrechnen; 10 Beispiele.", datei: "binomischeformel.html", feedback: "" }
+    ]
+  },
+  {
+    ueberthema: "Dreiecke",
+    titel: "Arten und Eigenschaften",
+    beschreibung: "",
+    uebungen: [
+      { titel: "Dreiecke und ihre Eigenschaften", gruppe: "alle", info: "Fünf Stationen: benennen, Eigenschaften sortieren, beschriften und selbst Dreiecke formen.", datei: "eigenschaftendreiecke.html", feedback: "" },
+      { titel: "Arten und Eigenschaften 2", gruppe: "alle", info: "Zweite Version mit Karten zum Ziehen; zum Schluss Dreiecke durch Verschieben der Ecken formen.", datei: "eigenschaftendreiecke2.html", feedback: "" }
+    ]
+  },
+  {
+    ueberthema: "Dreiecke",
+    titel: "Umfang und Flächeninhalt",
+    beschreibung: "",
+    uebungen: [
+      { titel: "Formeltrainer Dreieck und Viereck", gruppe: "alle", info: "Jede Formel kommt so lange wieder, bis sie zweimal hintereinander richtig ist.", datei: "formeln.html", feedback: "" },
+      { titel: "Berechnungen am Dreieck", gruppe: "alle", info: "Formel aufstellen, Werte aus der Skizze ablesen und berechnen; zwei Runden zu je 4 Beispielen.", datei: "dreieckberechnung.html", feedback: "" },
+      { titel: "Textaufgaben", gruppe: "alle", info: "Umfang, Fläche und Kosten im Alltag; 6 Schulübungen und 4 Hausübungen, Fortschritt per Speicher-Code auf ein anderes Gerät übertragbar.", datei: "dreiecktext.html", feedback: "" }
+    ]
+  },
+  {
+    ueberthema: "Zahlenmengen und Wurzeln",
+    titel: "Zahlenmengen",
+    beschreibung: "",
+    uebungen: [
+      { titel: "Zahlenmengen", gruppe: "alle", info: "Element oder nicht Element, und zu welchen Mengen eine Zahl gehört (ℕ, ℤ, ℚ, 𝕀, ℝ).", datei: "zahlenmenge.html", feedback: "" }
+    ]
+  },
+  {
+    ueberthema: "Zahlenmengen und Wurzeln",
+    titel: "Quadratwurzeln",
+    beschreibung: "",
+    uebungen: [
+      { titel: "Wurzeltraining", gruppe: "alle", info: "Multiple Choice: Potenzen hoch 2, 3 und 4 unter der Wurzel vereinfachen.", datei: "Wurzeltraininghoch6.html", feedback: "" },
+      { titel: "Wurzeln ziehen – Mischübung", gruppe: "alle", info: "Teilweise Wurzel ziehen und das Ergebnis selbst eintippen, Zwischenschritte erlaubt.", datei: "wurzelmischung.html", feedback: "" }
+    ]
+  },
+  {
+    ueberthema: "Termumformungen",
+    titel: "Klammern",
+    beschreibung: "",
+    uebungen: [
+      { titel: "Klammern auflösen", gruppe: "alle", info: "Plus oder Minus vor der Klammer? Danach gleichartige Glieder zusammenfassen.", datei: "termeklammer.html", feedback: "" },
+      { titel: "Klammern ausmultiplizieren", gruppe: "alle", info: "Niveau Standard / Standard AHS in der Übung wählbar. Mit Pfeilen jedes Produkt bilden, ausrechnen und zusammenfassen.", datei: "monombinom.html", feedback: "" },
+      { titel: "Herausheben", gruppe: "alle", info: "Niveau Standard / Standard AHS in der Übung wählbar. Glieder in Faktoren zerlegen, gleiche Faktoren markieren und herausheben.", datei: "herausheben.html", feedback: "" }
+    ]
+  },
+  {
+    ueberthema: "Termumformungen",
+    titel: "Bruchterme",
+    beschreibung: "",
+    uebungen: [
+      { titel: "Bruchterme + und −", gruppe: "alle", info: "Niveau Standard / Standard AHS in der Übung wählbar. Nenner zerlegen, Hauptnenner finden, erweitern, Zähler zusammenfassen.", datei: "bruchterme.html", feedback: "" }
+    ]
+  },
+  {
+    ueberthema: "Bruchrechnung (Wiederholung)",
+    titel: "Multiplizieren und dividieren",
+    beschreibung: "",
+    uebungen: [
+      { titel: "Brüche mal und durch", gruppe: "alle", info: "15 Aufgaben mit langem Bruchstrich, gemischte Zahlen zuerst umwandeln.", datei: "bruchmultiunddivi.html", feedback: "" }
+    ]
+  },
+  {
+    ueberthema: "Pythagoras",
+    titel: "Grundlagen",
+    beschreibung: "",
+    uebungen: [
+      { titel: "Hypotenuse und Kathete", gruppe: "alle", info: "Niveau Standard / Standard AHS in der Übung wählbar. Fehlende Seite im rechtwinkligen Dreieck berechnen, Rechenweg wie im Heft.", datei: "pythagorasallgemein.html", feedback: "" }
+    ]
+  },
+  {
+    ueberthema: "Pythagoras",
+    titel: "In Figuren",
+    beschreibung: "",
+    uebungen: [
+      { titel: "Rechteck und Quadrat", gruppe: "alle", info: "Rechtwinkliges Dreieck erkennen, Diagonale oder Seite berechnen; 4 Aufgaben.", datei: "pythagorasrechteckquadrat.html", feedback: "" },
+      { titel: "Gleichschenkeliges und gleichseitiges Dreieck", gruppe: "alle", info: "Mit der Höhe in zwei rechtwinklige Dreiecke teilen, Basis halbieren; 4 Aufgaben.", datei: "pythagorasdreiecke.html", feedback: "" },
+      { titel: "Vierecke", gruppe: "alle", info: "Deltoid, Parallelogramm und Trapez; 6 Aufgaben.", datei: "pythagoras4ecke.html", feedback: "" }
+    ]
+  },
+  {
+    ueberthema: "Pythagoras",
+    titel: "Anwenden und üben",
+    beschreibung: "",
+    uebungen: [
+      { titel: "Textaufgaben", gruppe: "alle", info: "Niveau Standard / Standard AHS in der Übung wählbar. Alltagsaufgaben: genau lesen, Skizze anfertigen, Schritt für Schritt rechnen.", datei: "pythagorastextaufgaben.html", feedback: "" },
+      { titel: "Übungsstunde und Hausübung", gruppe: "alle", info: "Niveau Standard / Standard AHS in der Übung wählbar. Gemischte Wiederholung aller Figuren, danach Zusatzbeispiele für die Hausübung; Fortschritt wird gespeichert.", datei: "ubungsstundepythagoras.html", feedback: "" }
+    ]
+  }
+];
+
+/* ========================================================= */
+
+const NAMEN = { alle: "für alle", ahs: "AHS", std: "Standard" };
+let gruppe = "all";
+let klasse = 3;
+try {
+  const k = parseInt(localStorage.getItem("m-klasse"), 10);
+  if (k >= 1 && k <= 4) klasse = k;
+} catch (e) {}
+{
+  const m = location.hash.match(/^#klasse-([1-4])$/);
+  if (m) klasse = parseInt(m[1], 10);
+}
+function klasseVon(thema) {
+  if (thema.klasse) return thema.klasse;
+  const b = UEBERTHEMEN.find(x => x.titel === thema.ueberthema);
+  return b && b.klasse ? b.klasse : 0;   // 0 = ohne Klasse, erscheint überall
+}
+let suche = "";
+
+try {
+  const g = localStorage.getItem("m3-gruppe");
+  if (g === "ahs" || g === "std" || g === "all") gruppe = g;
+} catch (e) {}
+
+function passt(u, thema) {
+  if (gruppe !== "all" && u.gruppe !== "alle" && u.gruppe !== gruppe) return false;
+  if (!suche) return true;
+  const t = [thema.ueberthema, thema.titel, thema.beschreibung, u.titel, u.info, NAMEN[u.gruppe]].join(" ").toLowerCase();
+  return t.includes(suche);
+}
+
+function esc(s) {
+  return String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+}
+
+function render() {
+  const list = document.getElementById("list");
+  let html = "";
+
+  // Reihenfolge: zuerst wie in UEBERTHEMEN, dann alle übrigen Namen, Themen ohne Überthema zuletzt
+  const meine = THEMEN.filter(t => { const k = klasseVon(t); return k === 0 || k === klasse; });
+  const namen = UEBERTHEMEN.filter(b => b.klasse === klasse).map(b => b.titel);
+  meine.forEach(t => { const n = t.ueberthema || ""; if (!namen.includes(n)) namen.push(n); });
+  namen.sort((a, b) => (a === "") - (b === ""));
+
+  let nr = 0;
+  namen.forEach(name => {
+    const themen = meine.filter(t => (t.ueberthema || "") === name);
+    if (!themen.length) return;
+    nr++;
+    let inhalt = "";
+    themen.forEach(thema => {
+      const sichtbar = thema.uebungen.filter(u => passt(u, thema));
+      if (!sichtbar.length) return;
+      inhalt += `<section class="topic">
+        <h3>${esc(thema.titel)}</h3>
+        ${thema.beschreibung ? `<p class="desc">${esc(thema.beschreibung)}</p>` : ""}
+        <ul class="ex">`;
+      sichtbar.forEach(u => {
+        const url = /^https?:/.test(u.datei) ? u.datei : baseVon(klasseVon(thema) || klasse) + u.datei;
+        const meta = (u.info ? esc(u.info) + " – " : "") + esc(u.datei);
+        inhalt += zeile(url, u.titel, `<span class="chip ${u.gruppe}">${NAMEN[u.gruppe]}</span>`, meta, u.feedback);
+      });
+      inhalt += `</ul></section>`;
+    });
+    if (!inhalt) return;
+    const b = UEBERTHEMEN.find(x => x.titel === name);
+    html += `<section class="bereich">
+      <h2><span class="nr">${nr}</span>${esc(name || "Weitere Themen")}</h2>
+      ${b && b.erklaerung ? `<p class="erkl">${esc(b.erklaerung)}</p>` : ""}
+      ${inhalt}
+    </section>`;
+  });
+  const leer = meine.length
+    ? `<p class="empty">Keine Übung gefunden. Probier einen anderen Suchbegriff oder wähle „Alle zeigen“.</p>`
+    : `<p class="empty">Für die ${klasse}. Klasse sind noch keine Übungen eingetragen. Leg in der index.html ein Überthema mit klasse: ${klasse} an.${REPOS[klasse] ? "" : " Für diese Klasse ist auch noch kein Repo unter REPOS eingetragen."}</p>`;
+  list.innerHTML = html || leer;
+
+  document.getElementById("kl-titel").textContent = klasse + ". Klasse";
+  document.querySelectorAll(".klassen button").forEach(b =>
+    b.setAttribute("aria-current", +b.dataset.k === klasse ? "page" : "false"));
+
+  document.querySelectorAll(".seg button").forEach(b =>
+    b.setAttribute("aria-pressed", b.dataset.g === gruppe ? "true" : "false"));
+}
+
+document.querySelectorAll(".seg button").forEach(b => {
+  b.addEventListener("click", () => {
+    gruppe = b.dataset.g;
+    try { localStorage.setItem("m3-gruppe", gruppe); } catch (e) {}
+    render();
+  });
+});
+document.querySelectorAll(".klassen button").forEach(b => {
+  b.addEventListener("click", () => {
+    klasse = +b.dataset.k;
+    try { localStorage.setItem("m-klasse", klasse); } catch (e) {}
+    history.replaceState(null, "", "#klasse-" + klasse);
+    render();
+    neueDateien();
+  });
+});
+window.addEventListener("hashchange", () => {
+  const m = location.hash.match(/^#klasse-([1-4])$/);
+  if (m) { klasse = +m[1]; render(); neueDateien(); }
+});
+document.querySelector(".search").addEventListener("input", e => {
+  suche = e.target.value.trim().toLowerCase();
+  render();
+});
+
+function zeile(url, titel, chip, meta, feedback) {
+  let fb = "";
+  if (feedback) {
+    fb = /^https?:/.test(feedback)
+      ? `<a class="fb" href="${esc(feedback)}" target="_blank" rel="noopener">Feedback ansehen</a>`
+      : `<p class="note">${esc(feedback)}</p>`;
+  }
+  return `<li>
+    <div class="row">
+      <a class="item" href="${esc(url)}" target="_blank" rel="noopener">
+        <span class="title">${esc(titel)}</span>
+        ${chip}
+        <span class="meta">${meta}</span>
+      </a>
+      <button type="button" class="copy" data-url="${esc(url)}">Link kopieren</button>
+    </div>
+    ${fb}
+  </li>`;
+}
+
+function kopieren(btn) {
+  const url = btn.dataset.url;
+  const fertig = () => { btn.textContent = "Kopiert"; setTimeout(() => btn.textContent = "Link kopieren", 1500); };
+  if (navigator.clipboard && window.isSecureContext) {
+    navigator.clipboard.writeText(url).then(fertig, () => alt());
+  } else alt();
+  function alt() {
+    const t = document.createElement("textarea");
+    t.value = url; document.body.appendChild(t); t.select();
+    try { document.execCommand("copy"); fertig(); } catch (e) { prompt("Link kopieren:", url); }
+    t.remove();
+  }
+}
+document.addEventListener("click", e => {
+  const b = e.target.closest(".copy");
+  if (b) kopieren(b);
+});
+
+/* Dateien im Repo der gewählten Klasse, die noch nicht in THEMEN stehen.
+   Ergebnis wird 10 Minuten zwischengespeichert, damit GitHub nicht zu oft gefragt wird. */
+async function dateienHolen(k) {
+  const key = "m-repo-" + k;
+  try {
+    const c = JSON.parse(sessionStorage.getItem(key) || "null");
+    if (c && Date.now() - c.zeit < 10 * 60 * 1000) return c.namen;
+  } catch (e) {}
+  const r = await fetch(`https://api.github.com/repos/${GITHUB_NAME}/${REPOS[k]}/contents/`);
+  if (!r.ok) return null;
+  const namen = (await r.json())
+    .filter(d => d.type === "file" && /\.html?$/i.test(d.name))
+    .map(d => d.name);
+  try { sessionStorage.setItem(key, JSON.stringify({ zeit: Date.now(), namen })); } catch (e) {}
+  return namen;
+}
+
+async function neueDateien() {
+  const box = document.getElementById("neu");
+  box.hidden = true;
+  const k = klasse;
+  if (!REPOS[k]) return;
+  try {
+    const namen = await dateienHolen(k);
+    if (!namen || k !== klasse) return;   // inzwischen Reiter gewechselt
+    const bekannt = new Set(THEMEN
+      .filter(t => klasseVon(t) === k)
+      .flatMap(t => t.uebungen.map(u => u.datei.toLowerCase())));
+    const neu = namen.filter(n => n.toLowerCase() !== "index.html" && !bekannt.has(n.toLowerCase()));
+    if (!neu.length) return;
+    document.getElementById("neu-desc").textContent =
+      `Diese Dateien liegen im Repo ${REPOS[k]}, stehen aber noch nicht in der Liste oben.`;
+    document.getElementById("neu-list").innerHTML = neu
+      .map(n => zeile(baseVon(k) + n, n.replace(/\.html?$/i, ""), "", esc(n), ""))
+      .join("");
+    box.hidden = false;
+  } catch (e) {}
+}
+
+render();
+neueDateien();
+</script>
+</body>
+</html>
