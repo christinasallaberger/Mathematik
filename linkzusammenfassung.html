@@ -337,7 +337,7 @@ footer {
     <ul class="ex" id="neu-list"></ul>
   </section>
 
-  <footer>Übersicht für Lehrer/innen. Neue Übungen und Überthemen werden in der index.html unter UEBERTHEMEN (mit klasse) und THEMEN eingetragen.</footer>
+  <footer>Übersicht für Lehrer/innen. Neue Übungen und Überthemen werden in der Datei linkzusammenfassung.html (Repo „Mathematik“) unter UEBERTHEMEN (mit klasse) und THEMEN eingetragen.</footer>
 </main>
 
 <script>
@@ -389,7 +389,7 @@ const UEBERTHEMEN = [
   {
     klasse: 3,
     titel: "Terme",
-    erklaerung: "Monom, Binom, Polynom unterscheiden, gleichartige Glieder zusammenfassen, Klammern auflösen und die binomischen Formeln."
+    erklaerung: "Monom, Binom, Polynom unterscheiden, gleichartige Glieder zusammenfassen, Klammern auflösen und ausmultiplizieren, herausheben und die binomischen Formeln."
   },
   {
     klasse: 3,
@@ -496,6 +496,16 @@ const THEMEN = [
     uebungen: [
       { titel: "Terme + und −", gruppe: "alle", info: "20 Beispiele, von einfach bis schwierig: gleichartige Glieder zusammenfassen.", datei: "termeas.html", feedback: "" },
       { titel: "Mit Hochzahlen, Klammern und Probe", gruppe: "alle", info: "Standard: zwei Variablen, einfache Klammern. Standard AHS: drei Variablen, Hochzahlen und verschachtelte Klammern.", datei: "termeaddsub.html", feedback: "" }
+    ]
+  },
+  {
+    ueberthema: "Terme",
+    titel: "Klammern und Herausheben",
+    beschreibung: "",
+    uebungen: [
+      { titel: "Klammern auflösen", gruppe: "alle", info: "Niveau Standard / Standard AHS in der Übung wählbar. Plus oder Minus vor der Klammer? Danach gleichartige Glieder zusammenfassen.", datei: "termeklammer.html", feedback: "" },
+      { titel: "Klammern ausmultiplizieren", gruppe: "alle", info: "Niveau Standard / Standard AHS in der Übung wählbar. Mit Pfeilen jedes Produkt bilden, ausrechnen und zusammenfassen; 6 Beispiele.", datei: "monommalbinom.html", feedback: "" },
+      { titel: "Herausheben", gruppe: "alle", info: "Niveau Standard / Standard AHS in der Übung wählbar. Glieder in Faktoren zerlegen, gleiche Faktoren markieren und herausheben; 6 Beispiele.", datei: "herausheben.html", feedback: "" }
     ]
   },
   {
@@ -673,7 +683,7 @@ function render() {
   });
   const leer = meine.length
     ? `<p class="empty">Keine Übung gefunden. Probier einen anderen Suchbegriff oder wähle „Alle zeigen“.</p>`
-    : `<p class="empty">Für die ${klasse}. Klasse sind noch keine Übungen eingetragen. Leg in der index.html ein Überthema mit klasse: ${klasse} an.${REPOS[klasse] ? "" : " Für diese Klasse ist auch noch kein Repo unter REPOS eingetragen."}</p>`;
+    : `<p class="empty">Für die ${klasse}. Klasse sind noch keine Übungen eingetragen. Leg in der linkzusammenfassung.html ein Überthema mit klasse: ${klasse} an.${REPOS[klasse] ? "" : " Für diese Klasse ist auch noch kein Repo unter REPOS eingetragen."}</p>`;
   list.innerHTML = html || leer;
 
   document.getElementById("kl-titel").textContent = klasse + ". Klasse";
